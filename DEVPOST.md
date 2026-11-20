@@ -21,7 +21,7 @@ Tutorial Time-Machine is a Chrome extension and a web app.
 - Every result shows where it came from: **⚡ On-device**, **📦 Cache** or **☁️ Cloud**, and a savings meter shows how much of the work never left your browser.
 - No extension? The web app does the same on four demo tutorials or on code you paste.
 
-## How I built it
+## How we built it
 
 It's built on **Firebase AI Logic's hybrid inference**, and the whole idea is to use each kind of AI for what it's good at:
 
@@ -33,7 +33,7 @@ Nano's knowledge is frozen, so it only points. The cloud model decides. Also use
 
 **Full disclosure:** I built this together with **Claude Code**, an AI coding assistant, which wrote most of the code. My part was steering it: deciding what to build and what mattered, setting up the Firebase project, choosing to stay on the free tier, testing every step in Chrome and reporting what broke, and pushing for fixes until it worked.
 
-## Challenges I ran into
+## Challenges we ran into
 
 - **On-device was slow at first.** The first version took about **2 minutes** to scan one tutorial. Scanning the whole page in one prompt and having Nano answer with just line numbers brought it down to about **16–30 seconds**.
 - **The small model flagged noise**, like config values and `console.log`. A simple code filter after the model fixed that better than prompt tweaks.
@@ -41,14 +41,21 @@ Nano's knowledge is frozen, so it only points. The cloud model decides. Also use
 - **Free-tier limits.** Google Search grounding isn't available on the free tier for the newer Gemini models, and the first model I picked wasn't open to new projects. Thanks to Remote Config, switching models didn't need a redeploy, and when Search isn't available the app still answers but clearly labels it "no Search".
 - **I leaked a debug token**, and caught it. The first deploy accidentally included an App Check debug token. I found it by checking the live site, replaced the token, and added a build check so it can't happen again.
 
-## What I learned
+## Accomplishments that we're proud of
+
+- The second person to read a tutorial gets every fix from the cache in about a second, with **zero cloud calls**. The savings meter shows 100% of the work staying in the browser.
+- The markers land on exactly the right line on real web pages, even with syntax highlighting.
+- Firebase AI Logic's on-device mode works inside a Chrome extension, which isn't covered in Firebase's docs. I tested it step by step before building on it.
+- It works on the free tier, and every fallback is visible to the user instead of hidden.
+
+## What we learned
 
 - Small on-device models are great at filtering and pointing, not at judging. Let the cloud do the judging.
 - On-device speed depends mostly on how much text the model has to write.
 - Fallbacks should be visible to the user, not hidden.
 - AI coding tools are fast, but someone still has to test everything in a real browser.
 
-## What's next
+## What's next for Tutorial Time-Machine
 
 - Write cache entries from a trusted backend so nobody can store a wrong answer.
 - Fix multi-line statements as one piece instead of line by line.
