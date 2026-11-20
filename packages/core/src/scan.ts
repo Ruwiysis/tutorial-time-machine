@@ -426,9 +426,11 @@ export async function scanBlock(
 
 /**
  * Hybrid routing rule between step 1 and steps 2–3: which flagged lines are
- * worth checking at all. Only lines the on-device model is sure about
- * (by default "maybe" lines stay local), highest confidence first. The cost
- * cap is applied later, per cloud call, in verifyFlagged.
+ * worth checking at all: lines at or above min_confidence_to_verify (Remote
+ * Config), highest confidence first. The default 0.5 checks both "sure" and
+ * "maybe" lines: in testing Nano put ReactDOM.render in "maybe", and leaving
+ * it local hid the demo's main fix. Raise it to 0.6 to keep "maybe" lines on
+ * the device. The cost cap is applied later, per cloud call, in verifyFlagged.
  */
 export function selectLinesToVerify<T extends { confidence: number }>(
   flagged: T[],

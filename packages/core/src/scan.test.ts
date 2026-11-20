@@ -365,7 +365,7 @@ describe('selectLinesToVerify', () => {
     expect(out.map((x) => x.confidence)).toEqual([0.95, 0.9, 0.7, 0.6]);
   });
 
-  it('with default settings, "sure" lines go on and "maybe" lines stay local', () => {
+  it('with a 0.6 threshold, "sure" lines go on and "maybe" lines stay local', () => {
     const out = selectLinesToVerify([f(SURE_CONFIDENCE), f(MAYBE_CONFIDENCE)], { minConfidenceToVerify: 0.6 });
     expect(out.map((x) => x.confidence)).toEqual([SURE_CONFIDENCE]);
   });

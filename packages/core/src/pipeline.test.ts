@@ -17,7 +17,8 @@ import { checkPage } from './pipeline';
 import { RC_DEFAULTS, parseSettings } from './settings';
 import { loadFixture } from './test-utils/fixtures';
 
-const settings = parseSettings((k) => String(RC_DEFAULTS[k as keyof typeof RC_DEFAULTS] ?? ''));
+// Threshold 0.6 so Nano's "maybe" lines (0.5) stay local in these tests.
+const settings = { ...parseSettings((k) => String(RC_DEFAULTS[k as keyof typeof RC_DEFAULTS] ?? '')), minConfidenceToVerify: 0.6 };
 
 /** Nano stand-in: "sure" for Firebase v8 calls, "maybe" for the auth state listener. */
 const scanModel = {

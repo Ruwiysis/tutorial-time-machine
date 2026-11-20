@@ -50,7 +50,7 @@ export const DEFAULT_TRACKED_LIBRARIES = [
 export const RC_DEFAULTS: Record<string, string | number> = {
   [RC_KEYS.cloudModelName]: 'gemini-3.5-flash-lite',
   [RC_KEYS.scanInferenceMode]: InferenceMode.PREFER_ON_DEVICE,
-  [RC_KEYS.minConfidenceToVerify]: 0.6,
+  [RC_KEYS.minConfidenceToVerify]: 0.5,
   [RC_KEYS.maxCloudCallsPerPage]: 10,
   [RC_KEYS.trackedLibraries]: JSON.stringify(DEFAULT_TRACKED_LIBRARIES),
 };
@@ -97,7 +97,7 @@ export function parseSettings(get: (key: string) => string | undefined): Runtime
     scanInferenceMode: VALID_MODES.has(mode)
       ? (mode as InferenceMode)
       : InferenceMode.PREFER_ON_DEVICE,
-    minConfidenceToVerify: clamp(toNumber(get(RC_KEYS.minConfidenceToVerify), 0.6), 0, 1),
+    minConfidenceToVerify: clamp(toNumber(get(RC_KEYS.minConfidenceToVerify), 0.5), 0, 1),
     maxCloudCallsPerPage: Math.round(
       clamp(toNumber(get(RC_KEYS.maxCloudCallsPerPage), 10), 0, 100),
     ),

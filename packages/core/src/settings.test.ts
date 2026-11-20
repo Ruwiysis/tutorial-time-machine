@@ -8,7 +8,7 @@ describe('parseSettings', () => {
   it('uses defaults when nothing is set', () => {
     const s = parseSettings(() => undefined);
     expect(s.scanInferenceMode).toBe(InferenceMode.PREFER_ON_DEVICE);
-    expect(s.minConfidenceToVerify).toBe(0.6);
+    expect(s.minConfidenceToVerify).toBe(0.5);
     expect(s.maxCloudCallsPerPage).toBe(10);
     expect(s.cloudModelName).toBe(RC_DEFAULTS[RC_KEYS.cloudModelName]);
     expect(s.trackedLibraries).toContain('firebase');

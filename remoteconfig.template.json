@@ -1,27 +1,37 @@
 {
   "parameters": {
     "cloud_model_name": {
-      "defaultValue": { "value": "gemini-3.5-flash-lite" },
+      "defaultValue": {
+        "value": "gemini-3.5-flash-lite"
+      },
       "description": "Cloud Gemini model for grounded verification and the scan fallback.",
       "valueType": "STRING"
     },
     "scan_inference_mode": {
-      "defaultValue": { "value": "prefer_on_device" },
+      "defaultValue": {
+        "value": "prefer_on_device"
+      },
       "description": "InferenceMode for the scan step: prefer_on_device | only_on_device | prefer_in_cloud | only_in_cloud.",
       "valueType": "STRING"
     },
     "min_confidence_to_verify": {
-      "defaultValue": { "value": "0.6" },
-      "description": "Flagged lines below this on-device confidence are not sent to the cloud.",
+      "defaultValue": {
+        "value": "0.5"
+      },
+      "description": "Flagged lines below this on-device confidence stay local. Nano reports sure=0.9 / maybe=0.5; 0.5 verifies both.",
       "valueType": "NUMBER"
     },
     "max_cloud_calls_per_page": {
-      "defaultValue": { "value": "10" },
+      "defaultValue": {
+        "value": "10"
+      },
       "description": "Maximum cloud verification calls per page (cost guard).",
       "valueType": "NUMBER"
     },
     "tracked_libraries": {
-      "defaultValue": { "value": "[\"firebase\",\"react\",\"react-dom\",\"openai\",\"tensorflow\",\"next\",\"vue\",\"angular\",\"express\",\"langchain\",\"pandas\",\"numpy\",\"django\",\"flask\"]" },
+      "defaultValue": {
+        "value": "[\"firebase\",\"react\",\"react-dom\",\"openai\",\"tensorflow\",\"next\",\"vue\",\"angular\",\"express\",\"langchain\",\"pandas\",\"numpy\",\"django\",\"flask\"]"
+      },
       "description": "JSON array of library names the scanner focuses on.",
       "valueType": "JSON"
     }
