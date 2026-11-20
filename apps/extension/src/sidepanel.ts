@@ -266,12 +266,13 @@ function renderSteps(result: PageCheckResult) {
   const { stats, page } = result;
   const flagged = page.blocks.reduce((n, b) => n + b.flagged.length, 0);
   steps.set('scan', 'done', `${page.linesScanned} lines ${result.scanServedBy === 'on-device' ? '⚡ on-device' : '☁️ in the cloud'} in ${secs(result.timings.scanMs)} · ${flagged} flagged`);
-  if (!stats.unique) {
+  const looked = stats.unique + (stats.recalled ?? 0);
+  if (!looked) {
     steps.set('cache', 'skipped', 'Nothing to look up');
     steps.set('cloud', 'skipped', 'Not needed');
     return;
   }
-  steps.set('cache', 'done', `${stats.fromCache} of ${plural(stats.unique, 'line')} already verified`);
+  steps.set('cache', 'done', `${stats.fromCache} of ${plural(looked, 'line')} found in the cache`);
   const all = [...result.outcomes.values()];
   const tried = all.filter((o) => o.status === 'error' || (o.status !== 'skipped' && o.servedBy === 'cloud'));
   const failed = tried.filter((o) => o.status === 'error').length;

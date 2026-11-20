@@ -274,8 +274,9 @@ async function run() {
 
 function showResults(doc: OpenDoc, r: PageCheckResult) {
   const { stats } = r;
-  if (stats.unique) {
-    steps.set('cache', 'done', `${stats.fromCache} of ${plural(stats.unique, 'line')} already verified`);
+  const looked = stats.unique + (stats.recalled ?? 0);
+  if (looked) {
+    steps.set('cache', 'done', `${stats.fromCache} of ${plural(looked, 'line')} found in the cache`);
   }
   const all = [...r.outcomes.values()];
   const cloudTried = all.filter((o) => o.status === 'error' || (o.status !== 'skipped' && o.servedBy === 'cloud'));
@@ -286,7 +287,7 @@ function showResults(doc: OpenDoc, r: PageCheckResult) {
     const search = stats.groundedCalls ? ' with Google Search' : ' (Google Search unavailable)';
     const failures = failed.length ? ` · ${failed.length} failed` : '';
     steps.set('cloud', 'done', `${plural(stats.sentToCloud, 'line')} in ${plural(stats.cloudCalls, 'request')}${search} · ${secs(r.timings.verifyMs)}${failures}`);
-  } else if (stats.unique) {
+  } else if (looked) {
     steps.set('cloud', 'skipped', stats.skipped ? 'Budget used up' : 'Not needed: everything came from the cache');
   }
 

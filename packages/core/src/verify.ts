@@ -53,6 +53,11 @@ export interface VerifyStats {
   groundedCalls: number;
   /** Distinct lines not checked because the per-page cloud budget ran out. */
   skipped: number;
+  /**
+   * Lines the on-device scan did not flag but the cache still knew (see
+   * cacheRecallCandidates in pipeline.ts). Already counted in fromCache.
+   */
+  recalled?: number;
 }
 
 export interface VerifyDeps {

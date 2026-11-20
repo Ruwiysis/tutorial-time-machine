@@ -10,7 +10,8 @@
  */
 import type { GenerativeModel } from 'firebase/ai';
 import type { ServedBy } from './models';
-import { scanPage, selectLinesToVerify, type CodeBlock, type FlaggedLine, type PageScanResult } from './scan';
+import { lookupCache } from './cache';
+import { couldUseLibraryApi, scanPage, selectLinesToVerify, type CodeBlock, type FlaggedLine, type PageScanResult } from './scan';
 import type { RuntimeSettings } from './settings';
 import { verifyFlagged, type LineOutcome, type VerifyDeps, type VerifyProgress, type VerifyStats } from './verify';
 
@@ -61,13 +62,67 @@ export async function checkPage(
   events.onScanned?.(page, candidates.map((c) => c.id));
 
   const t1 = performance.now();
-  const { outcomes, stats } = await verifyFlagged(deps.verify, candidates, ctx, events.onVerifyProgress);
+  const recallCandidates = cacheRecallCandidates(blocks, page, new Set(candidates.map((c) => c.id)));
+  const [{ outcomes, stats }, recalled] = await Promise.all([
+    verifyFlagged(deps.verify, candidates, ctx, events.onVerifyProgress),
+    recallFromCache(deps.verify, recallCandidates),
+  ]);
   const verifyMs = performance.now() - t1;
+  for (const o of recalled) outcomes.set(o.id, o);
+  stats.fromCache += recalled.length;
+  stats.recalled = recalled.length;
+
   // Emitted after the fact, in page order, so UIs can animate markers in sequence.
-  for (const c of candidates) {
-    const o = outcomes.get(c.id);
-    if (o) events.onLine?.(o);
-  }
+  for (const o of [...outcomes.values()].sort((a, b) => compareLineIds(a.id, b.id))) events.onLine?.(o);
 
   return { page, keptLocal, outcomes, stats, scanServedBy: page.servedBy, timings: { scanMs, verifyMs } };
+}
+
+/** Upper bound on extra cache lookups per page (each is 1–2 Firestore reads). */
+export const MAX_CACHE_RECALL = 60;
+
+/**
+ * Cache-assisted recall. Small on-device models don't flag exactly the same
+ * lines on every run. Any library-looking line Nano did NOT send on is still
+ * looked up in the shared cache (never sent to the cloud), so once one reader
+ * has a line verified, every later reader gets its marker even if Nano misses
+ * it this time. Costs a few Firestore reads and no model calls.
+ */
+export function cacheRecallCandidates(
+  blocks: CodeBlock[],
+  page: PageScanResult,
+  alreadyChecked: Set<string>,
+): { id: string; library: string; code: string }[] {
+  // Library: the block's own, else the page's most common one.
+  const votes = new Map<string, number>();
+  for (const b of page.blocks) if (b.library) votes.set(b.library, (votes.get(b.library) ?? 0) + 1);
+  const pageLibrary = [...votes.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+
+  const out: { id: string; library: string; code: string }[] = [];
+  blocks.forEach((block, b) => {
+    const library = page.blocks[b]?.library ?? pageLibrary;
+    if (!library) return;
+    block.code.split('\n').forEach((code, i) => {
+      const id = lineId(b, i + 1);
+      if (!code.trim() || alreadyChecked.has(id) || !couldUseLibraryApi(code)) return;
+      out.push({ id, library, code });
+    });
+  });
+  return out.slice(0, MAX_CACHE_RECALL);
+}
+
+async function recallFromCache(deps: VerifyDeps, candidates: { id: string; library: string; code: string }[]): Promise<LineOutcome[]> {
+  const hits = await Promise.all(
+    candidates.map(async (c) => {
+      const entry = await lookupCache(deps.db, c.library, c.code).catch(() => null);
+      return entry ? ({ id: c.id, status: entry.status, servedBy: 'cache', entry } satisfies LineOutcome) : null;
+    }),
+  );
+  return hits.filter((h): h is NonNullable<typeof h> => h !== null);
+}
+
+function compareLineIds(a: string, b: string): number {
+  const [ab, an] = a.split(':').map(Number);
+  const [bb, bn] = b.split(':').map(Number);
+  return ab! - bb! || an! - bn!;
 }

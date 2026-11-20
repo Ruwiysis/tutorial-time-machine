@@ -75,4 +75,24 @@ describe('checkPage', () => {
     expect(again.stats).toMatchObject({ fromCache: 2, cloudCalls: 0 });
     expect([...again.outcomes.values()].every((o) => o.status === 'outdated' && o.servedBy === 'cache')).toBe(true);
   });
+
+  it('cache-assisted recall: lines Nano misses on a later run still get their cached verdict', async () => {
+    const { title, blocks } = loadFixture('firebase-v8-firestore.html');
+    await checkPage(deps(), blocks, { title }); // first reader fills the cache (lines 1:11 and 1:13)
+    cloud.mockClear();
+
+    // Later run: Nano recognises the library but flags nothing at all.
+    const forgetful = {
+      generateContent: vi.fn(async () => ({
+        response: { text: () => '{"lib":"firebase","sure":[],"maybe":[]}', inferenceSource: InferenceSource.ON_DEVICE },
+      })),
+    } as unknown as GenerativeModel;
+    const lines: string[] = [];
+    const r = await checkPage({ ...deps(), scanModel: forgetful }, blocks, { title }, { onLine: (o) => lines.push(o.id) });
+
+    expect(cloud).not.toHaveBeenCalled(); // recall never goes to the cloud
+    expect(lines).toEqual(['1:11', '1:13']);
+    expect(r.stats).toMatchObject({ fromCache: 2, recalled: 2, cloudCalls: 0 });
+    expect(r.outcomes.get('1:13')).toMatchObject({ status: 'outdated', servedBy: 'cache' });
+  });
 });

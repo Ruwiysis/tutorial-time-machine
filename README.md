@@ -6,12 +6,12 @@ Built for **#BuildHybridAI 2026** on **Firebase AI Logic hybrid inference**: Gem
 
 - **Live web app:** https://tutorial-time-machine.web.app ([open the Firebase demo directly](https://tutorial-time-machine.web.app/?demo=firebase-v8-firestore))
 - **Demo tutorial pages for the extension:** https://tutorial-time-machine.web.app/tutorials/firebase-v8-firestore.html
-- **Chrome extension (ready to install):** [download the latest release](https://github.com/Ruwiysis/tutorial-time-machine/releases/latest/download/tutorial-time-machine-extension-v1.0.0.zip) (see [Install the extension](#install-the-extension-1-minute))
+- **Chrome extension (ready to install):** [download the latest release](https://github.com/Ruwiysis/tutorial-time-machine/releases/latest/download/tutorial-time-machine-extension.zip) (see [Install the extension](#install-the-extension-1-minute))
 - **License:** [Apache-2.0](LICENSE)
 
 ## Install the extension (1 minute)
 
-1. [Download the zip](https://github.com/Ruwiysis/tutorial-time-machine/releases/latest/download/tutorial-time-machine-extension-v1.0.0.zip) and **unzip** it into a folder.
+1. [Download the zip](https://github.com/Ruwiysis/tutorial-time-machine/releases/latest/download/tutorial-time-machine-extension.zip) and **unzip** it into a folder.
 2. In desktop Chrome (139+), open `chrome://extensions` and turn on **Developer mode** (top right).
 3. Click **Load unpacked** and choose the unzipped folder (the one that contains `manifest.json`).
 4. Pin **Tutorial Time-Machine** from the 🧩 menu, then open a demo tutorial: https://tutorial-time-machine.web.app/tutorials/firebase-v8-firestore.html
