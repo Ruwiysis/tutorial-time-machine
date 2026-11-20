@@ -89,3 +89,12 @@ select { font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid 
 .scan-code .line.flagged { background: color-mix(in srgb, var(--warn) 22%, transparent); box-shadow: inset 3px 0 0 var(--warn); cursor: help; }
 .scan-code .ln { opacity: 0.45; user-select: none; }
 .flags, .verify-list { margin: 8px 0 0; padding-left: 22px; font-size: 0.9rem; }
+
+/* Verify results */
+.meter { font-weight: 600; }
+.badge.status-outdated { color: var(--err); }
+.badge.status-ok { color: var(--ok); }
+.badge.status-unsure { color: var(--warn); }
+.diff pre { margin: 6px 0; padding: 6px 12px; white-space: pre-wrap; }
+.diff .old { background: color-mix(in srgb, var(--err) 14%, transparent); }
+.diff .new { background: color-mix(in srgb, var(--ok) 14%, transparent); }

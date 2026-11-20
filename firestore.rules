@@ -1,7 +1,8 @@
 rules_version = '2';
 
 // verifiedLines/{hash}: shared cache of cloud-verified lines.
-//   hash = SHA-256(library + "\n" + normalized code line), as 64 lowercase hex chars.
+//   hash = SHA-256(library + "\n" + normalized code line), as 64 lowercase hex chars
+//   (prefixed with "ungrounded\n" for answers made without Google Search).
 // Anyone can read, so the next reader of a tutorial gets the fix instantly.
 // Only signed-in (anonymous is fine) clients can create entries, and the schema is validated.
 // Entries are immutable from clients: no update and no delete.
@@ -20,9 +21,9 @@ service cloud.firestore {
 
     function isValidVerifiedLine(d) {
       return d.keys().hasAll(['library', 'code', 'status', 'modernCode', 'explanation',
-                              'sources', 'model', 'createdBy', 'createdAt'])
+                              'sources', 'model', 'grounded', 'createdBy', 'createdAt'])
         && d.keys().hasOnly(['library', 'code', 'status', 'modernCode', 'explanation',
-                             'sources', 'searchEntryPointHtml', 'model', 'createdBy', 'createdAt'])
+                             'sources', 'searchEntryPointHtml', 'model', 'grounded', 'createdBy', 'createdAt'])
         && d.library is string && d.library.size() > 0 && d.library.size() <= 64
         && d.code is string && d.code.size() > 0 && d.code.size() <= 2000
         && d.status in ['outdated', 'ok', 'unsure']
@@ -32,6 +33,10 @@ service cloud.firestore {
         && (!('searchEntryPointHtml' in d)
             || (d.searchEntryPointHtml is string && d.searchEntryPointHtml.size() <= 20000))
         && d.model is string && d.model.size() <= 100
+        // true = answered with Google Search grounding. Ungrounded answers use a
+        // different hash (see packages/core/src/hash.ts), so they never block a
+        // grounded entry for the same line.
+        && d.grounded is bool
         && d.createdBy == request.auth.uid
         && d.createdAt == request.time;
     }

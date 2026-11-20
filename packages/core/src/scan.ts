@@ -102,7 +102,7 @@ const PLATFORM_OBJECTS = new Set([
 
 /** Free functions and keywords that are followed by "(" but aren't library calls. */
 const PLATFORM_CALLS = new Set([
-  'if', 'for', 'while', 'switch', 'catch', 'function', 'return', 'typeof', 'await', 'async', 'new', 'with',
+  'if', 'for', 'while', 'switch', 'catch', 'function', 'def', 'class', 'return', 'typeof', 'await', 'async', 'new', 'with',
   'elif', 'not', 'and', 'or', 'in', 'print', 'len', 'range', 'open', 'str', 'int', 'float', 'list', 'dict',
   'set', 'tuple', 'bool', 'isinstance', 'enumerate', 'zip', 'sorted', 'min', 'max', 'sum', 'abs', 'round',
   'setTimeout', 'setInterval', 'clearTimeout', 'parseInt', 'parseFloat', 'fetch', 'alert', 'require',
@@ -129,7 +129,10 @@ const PLATFORM_MEMBERS = new Set([
  * Cheap, predictable, and it doesn't rely on a small model obeying "skip X".
  */
 export function couldUseLibraryApi(line: string): boolean {
-  const code = line.replace(/(["'`])(?:\\.|(?!\1)[^\\])*\1/g, '""');
+  const code = line
+    .replace(/(["'`])(?:\\.|(?!\1)[^\\])*\1/g, '""')
+    // Declarations name a function, they don't call one: "function f(", "def f(", "class C(".
+    .replace(/\b(function\*?|def|class)\s+[A-Za-z_$][\w$]*/g, '$1');
   if (/^\s*(import|from|export|npm|npx|yarn|pnpm|pip|pip3|conda|using|#include)\b|\brequire\s*\(\s*""/.test(code)) {
     return true;
   }
@@ -240,7 +243,16 @@ export function buildScanPrompt(
  * fences, leading prose and trailing chatter.
  */
 export function extractJsonObject(text: string): string | null {
-  const start = text.indexOf('{');
+  return extractBalancedJson(text, '{', '}');
+}
+
+/** Like extractJsonObject, for a top-level array. */
+export function extractJsonArray(text: string): string | null {
+  return extractBalancedJson(text, '[', ']');
+}
+
+function extractBalancedJson(text: string, open: '{' | '[', close: '}' | ']'): string | null {
+  const start = text.indexOf(open);
   if (start < 0) return null;
   let depth = 0;
   let inString = false;
@@ -252,24 +264,28 @@ export function extractJsonObject(text: string): string | null {
       else if (ch === '\\') escaped = true;
       else if (ch === '"') inString = false;
     } else if (ch === '"') inString = true;
-    else if (ch === '{') depth++;
-    else if (ch === '}' && --depth === 0) return text.slice(start, i + 1);
+    else if (ch === open) depth++;
+    else if (ch === close && --depth === 0) return text.slice(start, i + 1);
   }
   return null; // unbalanced: the answer was cut off
 }
 
-function parseLooseJson(text: string): Record<string, unknown> | null {
-  const json = extractJsonObject(text);
-  if (!json) return null;
+/** JSON.parse that also accepts trailing commas, a common small-model mistake. */
+export function parseJsonLenient(json: string): unknown {
   for (const candidate of [json, json.replace(/,\s*([}\]])/g, '$1')]) {
     try {
-      const value: unknown = JSON.parse(candidate);
-      if (value && typeof value === 'object' && !Array.isArray(value)) return value as Record<string, unknown>;
+      return JSON.parse(candidate);
     } catch {
       // try the next candidate (trailing commas removed)
     }
   }
-  return null;
+  return undefined;
+}
+
+function parseLooseJson(text: string): Record<string, unknown> | null {
+  const json = extractJsonObject(text);
+  const value = json ? parseJsonLenient(json) : undefined;
+  return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
 }
 
 function toConfidence(value: unknown): number {
@@ -409,17 +425,14 @@ export async function scanBlock(
 }
 
 /**
- * Hybrid routing rule for step 3: which flagged lines go to the cloud.
- * Only lines the on-device model is reasonably sure about, highest confidence
- * first, capped per page so one long tutorial can't run up the bill (or, on
- * the free tier, use up the daily quota).
+ * Hybrid routing rule between step 1 and steps 2–3: which flagged lines are
+ * worth checking at all. Only lines the on-device model is sure about
+ * (by default "maybe" lines stay local), highest confidence first. The cost
+ * cap is applied later, per cloud call, in verifyFlagged.
  */
 export function selectLinesToVerify<T extends { confidence: number }>(
   flagged: T[],
-  settings: Pick<RuntimeSettings, 'minConfidenceToVerify' | 'maxCloudCallsPerPage'>,
+  settings: Pick<RuntimeSettings, 'minConfidenceToVerify'>,
 ): T[] {
-  return flagged
-    .filter((f) => f.confidence >= settings.minConfidenceToVerify)
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, Math.max(0, settings.maxCloudCallsPerPage));
+  return flagged.filter((f) => f.confidence >= settings.minConfidenceToVerify).sort((a, b) => b.confidence - a.confidence);
 }

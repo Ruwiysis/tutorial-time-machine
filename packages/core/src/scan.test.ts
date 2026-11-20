@@ -98,7 +98,14 @@ describe('couldUseLibraryApi', () => {
     "    with open(sys.argv[1], encoding=\"utf-8\") as f:",
     "return response['choices'][0]['text'].strip()",
     'print(len(items))',
+    'async function sendMessage(text) {',
+    'def summarize(text):',
+    'class Counter(object):',
   ])('drops built-in-only lines: %s', (line) => expect(couldUseLibraryApi(line)).toBe(false));
+
+  it('still sees library calls inside a declaration line', () => {
+    expect(couldUseLibraryApi('function init() { firebase.initializeApp(cfg); }')).toBe(true);
+  });
 
   it.each([
     "  apiKey: 'YOUR_API_KEY',",
@@ -353,13 +360,13 @@ describe('scanBlock', () => {
 describe('selectLinesToVerify', () => {
   const f = (confidence: number) => ({ confidence });
 
-  it('keeps lines at or above the threshold, most confident first, up to the cap', () => {
-    const out = selectLinesToVerify([f(0.5), f(0.9), f(0.6), f(0.7), f(0.95)], { minConfidenceToVerify: 0.6, maxCloudCallsPerPage: 3 });
-    expect(out.map((x) => x.confidence)).toEqual([0.95, 0.9, 0.7]);
+  it('keeps lines at or above the threshold, most confident first', () => {
+    const out = selectLinesToVerify([f(0.5), f(0.9), f(0.6), f(0.7), f(0.95)], { minConfidenceToVerify: 0.6 });
+    expect(out.map((x) => x.confidence)).toEqual([0.95, 0.9, 0.7, 0.6]);
   });
 
-  it('returns nothing for a zero or negative cap', () => {
-    expect(selectLinesToVerify([f(1)], { minConfidenceToVerify: 0, maxCloudCallsPerPage: 0 })).toEqual([]);
-    expect(selectLinesToVerify([f(1)], { minConfidenceToVerify: 0, maxCloudCallsPerPage: -1 })).toEqual([]);
+  it('with default settings, "sure" lines go on and "maybe" lines stay local', () => {
+    const out = selectLinesToVerify([f(SURE_CONFIDENCE), f(MAYBE_CONFIDENCE)], { minConfidenceToVerify: 0.6 });
+    expect(out.map((x) => x.confidence)).toEqual([SURE_CONFIDENCE]);
   });
 });

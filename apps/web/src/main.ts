@@ -212,7 +212,13 @@ async function main() {
 
   scanModel = createScanModel(services.ai, settings, { deviceStatus });
   pipelineScanModel = createScanModel(services.ai, settings, { deviceStatus, responseSchema: SCAN_SCHEMA });
-  mountFixtureScan($('fixture-scan'), () => pipelineScanModel, () => services.settings, addError);
+  mountFixtureScan(
+    $('fixture-scan'),
+    () => pipelineScanModel,
+    () => services.settings,
+    () => ({ db: services.db, uid: services.user.uid, models: verifyModels, settings: services.settings }),
+    addError,
+  );
   verifyModels = {
     grounded: createVerifyModel(services.ai, settings),
     ungrounded: createVerifyModel(services.ai, settings, undefined, { grounded: false }),
