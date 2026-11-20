@@ -63,7 +63,9 @@ export function createScanModel(
     mode: effectiveScanMode(settings.scanInferenceMode, deviceStatus),
     onDeviceParams: {
       createOptions: { expectedInputs: ENGLISH_TEXT, expectedOutputs: ENGLISH_TEXT },
-      ...(responseSchema && { promptOptions: { responseConstraint: responseSchema } }),
+      // The SDK forwards on-device prompt options to Chrome unchanged, so give
+      // Chrome plain JSON Schema (the JSON round-trip runs the SDK's toJSON).
+      ...(responseSchema && { promptOptions: { responseConstraint: JSON.parse(JSON.stringify(responseSchema)) } }),
     },
     // Used only when on-device is unavailable (or Remote Config forces cloud).
     inCloudParams: {

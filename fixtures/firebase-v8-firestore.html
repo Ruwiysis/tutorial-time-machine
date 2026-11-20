@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build a Realtime Chat with Firebase and Cloud Firestore in 15 Minutes</title>
+  <link rel="stylesheet" href="fixture.css" />
+</head>
+<body>
+  <article>
+    <p class="meta">Posted March 14, 2021 · 8 min read · <span class="tag">firebase</span> <span class="tag">javascript</span></p>
+    <h1>Build a Realtime Chat with Firebase and Cloud Firestore in 15 Minutes</h1>
+
+    <p>Firebase makes realtime apps ridiculously easy. In this tutorial we'll build a tiny chat room with
+      Cloud Firestore for storage and anonymous Firebase Authentication, all from plain JavaScript in the browser.
+      No server required!</p>
+
+    <h2>1. Install and initialize Firebase</h2>
+    <p>Install the SDK from npm, then paste your project config from the Firebase console:</p>
+<pre><code class="language-bash">npm install firebase@8.10.0</code></pre>
+
+<pre><code class="language-javascript">import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'your-app.firebaseapp.com',
+  projectId: 'your-app',
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+const auth = firebase.auth();</code></pre>
+
+    <h2>2. Sign users in anonymously</h2>
+    <p>We don't want a sign-up form for a demo, so every visitor gets an anonymous account:</p>
+<pre><code class="language-javascript">auth.signInAnonymously().catch((error) =&gt; {
+  console.error('Sign-in failed', error);
+});
+
+auth.onAuthStateChanged((user) =&gt; {
+  if (user) {
+    console.log('Signed in as', user.uid);
+  }
+});</code></pre>
+
+    <h2>3. Send a message</h2>
+    <p>Each message is a document in the <code>messages</code> collection. We use a server timestamp so
+      messages sort correctly no matter whose clock is wrong:</p>
+<pre><code class="language-javascript">async function sendMessage(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  await db.collection('messages').add({
+    text: trimmed,
+    uid: auth.currentUser.uid,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+}</code></pre>
+
+    <h2>4. Listen for new messages in realtime</h2>
+    <p>This is the magic part. <code>onSnapshot</code> fires every time the query results change:</p>
+<pre><code class="language-javascript">const list = document.querySelector('#messages');
+
+db.collection('messages')
+  .orderBy('createdAt')
+  .limit(50)
+  .onSnapshot((snapshot) =&gt; {
+    list.innerHTML = '';
+    snapshot.forEach((doc) =&gt; {
+      const li = document.createElement('li');
+      li.textContent = doc.data().text;
+      list.appendChild(li);
+    });
+  });</code></pre>
+
+    <h2>5. Lock it down</h2>
+    <p>Finally, don't forget security rules. Only signed-in users may write, and nobody may edit other people's messages:</p>
+<pre><code class="language-plaintext">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /messages/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    &amp;&amp; request.resource.data.uid == request.auth.uid;
+    }
+  }
+}</code></pre>
+
+    <p>That's it! Deploy with <code>firebase deploy</code> and share the link with a friend. 🎉</p>
+  </article>
+  <footer>Demo fixture for Tutorial Time-Machine. The code above targets the Firebase JS SDK v8 on purpose.</footer>
+</body>
+</html>

@@ -10,7 +10,7 @@
     <main class="wrap">
       <header>
         <h1>Tutorial Time-Machine</h1>
-        <p class="sub">Milestone 1: hybrid inference diagnostics</p>
+        <p class="sub">Hybrid inference diagnostics</p>
       </header>
 
       <section class="card">
@@ -34,6 +34,12 @@
           <button id="btn-verify" disabled>☁️ Run verify model (cloud + Google Search)</button>
         </div>
         <div id="results"></div>
+      </section>
+
+      <section class="card">
+        <h2>Scan a fixture (step 1: on-device scan)</h2>
+        <p class="muted">Runs the real scan pipeline on a demo tutorial. Flagged lines are highlighted; hover for the reason.</p>
+        <div id="fixture-scan"></div>
       </section>
     </main>
     <script type="module" src="/src/main.ts"></script>

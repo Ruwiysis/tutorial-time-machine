@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>React for Beginners: Your First Counter App</title>
+  <link rel="stylesheet" href="fixture.css" />
+</head>
+<body>
+  <article>
+    <p class="meta">Posted September 2, 2020 · 6 min read · <span class="tag">react</span></p>
+    <h1>React for Beginners: Your First Counter App</h1>
+
+    <p>New to React? Let's build the classic counter. You'll learn components, state with hooks,
+      and how to mount your app into the page.</p>
+
+    <h2>1. Set up the project</h2>
+<pre><code class="language-bash">npx create-react-app my-counter
+cd my-counter
+npm start</code></pre>
+
+    <h2>2. Write the component</h2>
+    <p>Hooks let function components hold state. <code>useState</code> returns the current value and a setter:</p>
+<pre><code class="language-jsx">import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div className="counter"&gt;
+      &lt;p&gt;You clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Click me&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Counter;</code></pre>
+
+    <h2>3. Mount it</h2>
+    <p>In <code>src/index.js</code>, render the component into the <code>root</code> div from <code>public/index.html</code>:</p>
+<pre><code class="language-jsx">import React from 'react';
+import ReactDOM from 'react-dom';
+import Counter from './Counter';
+
+ReactDOM.render(
+  &lt;React.StrictMode&gt;
+    &lt;Counter /&gt;
+  &lt;/React.StrictMode&gt;,
+  document.getElementById('root')
+);</code></pre>
+
+    <h2>4. Bonus: hydrate server-rendered HTML</h2>
+    <p>If your HTML was rendered on the server, attach React to it instead of re-rendering:</p>
+<pre><code class="language-jsx">ReactDOM.hydrate(&lt;Counter /&gt;, document.getElementById('root'));</code></pre>
+
+    <p>Save, and your browser reloads with a working counter. Congratulations on your first React app!</p>
+  </article>
+  <footer>Demo fixture for Tutorial Time-Machine. The code above targets React 17 on purpose.</footer>
+</body>
+</html>

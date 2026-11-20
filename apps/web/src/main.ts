@@ -7,6 +7,7 @@ import {
   createScanModel,
   createVerifyModel,
   extractGrounding,
+  SCAN_SCHEMA,
   generateVerify,
   getDeviceModelStatus,
   initTtm,
@@ -18,6 +19,7 @@ import {
   type VerifyModels,
 } from '@ttm/core';
 import { readEnvConfig } from './env';
+import { mountFixtureScan } from './fixture-scan';
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -49,6 +51,8 @@ const BADGES: Record<ServedBy, string> = {
 
 let services: TtmServices;
 let scanModel: GenerativeModel;
+/** Structured-output scan model used by the real pipeline (scanBlock). */
+let pipelineScanModel: GenerativeModel;
 let verifyModels: VerifyModels;
 
 function renderStatus(rows: [string, string][]) {
@@ -69,7 +73,10 @@ async function refreshDeviceStatus() {
   $('device-status').textContent = DEVICE_LABELS[status];
   $('btn-download').hidden = status !== 'downloadable';
   // Rebuild the scan model so the routing matches what the device can really do.
-  if (services) scanModel = createScanModel(services.ai, services.settings, { deviceStatus: status });
+  if (services) {
+    scanModel = createScanModel(services.ai, services.settings, { deviceStatus: status });
+    pipelineScanModel = createScanModel(services.ai, services.settings, { deviceStatus: status, responseSchema: SCAN_SCHEMA });
+  }
   return status;
 }
 
@@ -204,6 +211,8 @@ async function main() {
   ]);
 
   scanModel = createScanModel(services.ai, settings, { deviceStatus });
+  pipelineScanModel = createScanModel(services.ai, settings, { deviceStatus, responseSchema: SCAN_SCHEMA });
+  mountFixtureScan($('fixture-scan'), () => pipelineScanModel, () => services.settings, addError);
   verifyModels = {
     grounded: createVerifyModel(services.ai, settings),
     ungrounded: createVerifyModel(services.ai, settings, undefined, { grounded: false }),

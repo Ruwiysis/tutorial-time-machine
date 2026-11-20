@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "types": ["dom-chromium-ai", "node"] },
+  "include": ["packages/*/src/**/*.test.ts", "packages/*/src/test-utils", "apps/*/src/**/*.test.ts", "scripts"]
+}

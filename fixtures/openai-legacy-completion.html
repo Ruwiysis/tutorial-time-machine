@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Summarize Any Article with GPT-3 and Python</title>
+  <link rel="stylesheet" href="fixture.css" />
+</head>
+<body>
+  <article>
+    <p class="meta">Posted January 9, 2023 · 5 min read · <span class="tag">python</span> <span class="tag">openai</span></p>
+    <h1>Summarize Any Article with GPT-3 and Python</h1>
+
+    <p>Large language models are great at summarizing. In this quick tutorial we'll write a Python script that
+      reads a text file and asks GPT-3 for a three-bullet summary.</p>
+
+    <h2>1. Install the library and set your key</h2>
+<pre><code class="language-bash">pip install openai==0.27.0
+export OPENAI_API_KEY="sk-..."</code></pre>
+
+    <h2>2. The script</h2>
+<pre><code class="language-python">import os
+import sys
+import openai
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+def summarize(text):
+    prompt = f"Summarize the following article in three bullet points:\n\n{text}\n\nSummary:"
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=200,
+        temperature=0.3,
+    )
+    return response["choices"][0]["text"].strip()
+
+
+if __name__ == "__main__":
+    with open(sys.argv[1], encoding="utf-8") as f:
+        article = f.read()
+    print(summarize(article))</code></pre>
+
+    <h2>3. Handle errors</h2>
+    <p>The API can rate-limit you. Catch the error and retry after a pause:</p>
+<pre><code class="language-python">import time
+
+try:
+    print(summarize(article))
+except openai.error.RateLimitError:
+    time.sleep(20)
+    print(summarize(article))</code></pre>
+
+    <p>Run it with <code>python summarize.py article.txt</code>. Enjoy your instant TL;DR!</p>
+  </article>
+  <footer>Demo fixture for Tutorial Time-Machine. The code above targets openai-python 0.x on purpose.</footer>
+</body>
+</html>

@@ -81,3 +81,11 @@ pre {
 }
 .sources { margin: 8px 0 0; padding-left: 18px; }
 .sources a { color: var(--accent); }
+
+/* Fixture scan panel */
+select { font: inherit; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--border, #8884); background: transparent; color: inherit; }
+.scan-code { padding: 8px 0; }
+.scan-code .line { padding: 0 12px; white-space: pre; }
+.scan-code .line.flagged { background: color-mix(in srgb, var(--warn) 22%, transparent); box-shadow: inset 3px 0 0 var(--warn); cursor: help; }
+.scan-code .ln { opacity: 0.45; user-select: none; }
+.flags, .verify-list { margin: 8px 0 0; padding-left: 22px; font-size: 0.9rem; }
