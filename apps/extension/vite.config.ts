@@ -23,6 +23,7 @@ export default defineConfig({
     rolldownOptions: {
       input: {
         sidepanel: here('sidepanel.html'),
+        popup: here('popup.html'),
         background: here('src/background.ts'),
       },
       output: {

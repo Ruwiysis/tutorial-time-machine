@@ -1,0 +1,12 @@
+* { box-sizing: border-box; }
+html { color-scheme: light dark; }
+body { margin: 0; width: 320px; background: var(--ttm-bg); color: var(--ttm-fg); font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+.pp { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.pp h1 { margin: 0; font-size: 1.05rem; }
+.pp-toggle { display: flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer; }
+.pp-toggle input { width: 18px; height: 18px; accent-color: var(--ttm-accent); }
+.pp-status { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 0; padding: 10px 12px; background: var(--ttm-surface); border: 1px solid var(--ttm-border); border-radius: var(--ttm-radius); }
+.pp-status dt { color: var(--ttm-muted); }
+.pp-status dd { margin: 0; }
+.pp-totals { margin: 0; font-size: 0.85rem; color: var(--ttm-muted); }
+.pp-link { font-size: 0.85rem; color: var(--ttm-accent); }

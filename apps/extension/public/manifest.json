@@ -4,8 +4,15 @@
   "version": "0.1.0",
   "description": "Warns you while you read when a coding tutorial's code is outdated, and shows the modern fix. Gemini Nano on-device + Gemini with Google Search.",
   "minimum_chrome_version": "139",
-  "action": { "default_title": "Tutorial Time-Machine" },
+  "action": { "default_title": "Tutorial Time-Machine", "default_popup": "popup.html" },
   "side_panel": { "default_path": "sidepanel.html" },
   "background": { "service_worker": "background.js", "type": "module" },
-  "permissions": ["sidePanel", "storage"]
+  "permissions": ["sidePanel", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "file:///*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

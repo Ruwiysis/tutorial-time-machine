@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tutorial Time-Machine</title>
+  </head>
+  <body>
+    <main class="pp">
+      <h1>⏳ Tutorial Time-Machine</h1>
+      <label class="pp-toggle">
+        <input id="enabled" type="checkbox" role="switch" />
+        <span>Check tutorials automatically</span>
+      </label>
+      <dl class="pp-status">
+        <dt>On-device AI</dt>
+        <dd id="device">Checking…</dd>
+        <dt>Signed in</dt>
+        <dd id="auth">…</dd>
+      </dl>
+      <p id="totals" class="pp-totals"></p>
+      <button id="open" class="ttm-btn ttm-btn-primary">Open side panel</button>
+      <a id="demo" class="pp-link" href="https://tutorial-time-machine.web.app/tutorials/firebase-v8-firestore.html" target="_blank" rel="noopener noreferrer">Try it on a demo tutorial ↗</a>
+    </main>
+    <script type="module" src="./src/popup.ts"></script>
+  </body>
+</html>
