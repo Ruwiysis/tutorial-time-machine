@@ -1,0 +1,25 @@
+{
+  "name": "tutorial-time-machine",
+  "private": true,
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @ttm/web",
+    "build": "npm run build -w @ttm/web",
+    "typecheck": "tsc -p packages/core && tsc -p apps/web",
+    "test": "node scripts/vitest.mjs run",
+    "deploy:rules": "firebase deploy --only firestore:rules,remoteconfig",
+    "deploy:web": "npm run build && firebase deploy --only hosting"
+  },
+  "devDependencies": {
+    "@types/dom-chromium-ai": "^0.0.18",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}

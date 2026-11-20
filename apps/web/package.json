@@ -1,0 +1,13 @@
+{
+  "name": "@ttm/web",
+  "private": true,
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": { "@ttm/core": "0.1.0" }
+}

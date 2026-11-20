@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// verifiedLines/{hash}: shared cache of cloud-verified lines.
+//   hash = SHA-256(library + "\n" + normalized code line), as 64 lowercase hex chars.
+// Anyone can read, so the next reader of a tutorial gets the fix instantly.
+// Only signed-in (anonymous is fine) clients can create entries, and the schema is validated.
+// Entries are immutable from clients: no update and no delete.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /verifiedLines/{hash} {
+      allow get, list: if true;
+
+      allow create: if request.auth != null
+        && hash.matches('^[a-f0-9]{64}$')
+        && isValidVerifiedLine(request.resource.data);
+
+      allow update, delete: if false;
+    }
+
+    function isValidVerifiedLine(d) {
+      return d.keys().hasAll(['library', 'code', 'status', 'modernCode', 'explanation',
+                              'sources', 'model', 'createdBy', 'createdAt'])
+        && d.keys().hasOnly(['library', 'code', 'status', 'modernCode', 'explanation',
+                             'sources', 'searchEntryPointHtml', 'model', 'createdBy', 'createdAt'])
+        && d.library is string && d.library.size() > 0 && d.library.size() <= 64
+        && d.code is string && d.code.size() > 0 && d.code.size() <= 2000
+        && d.status in ['outdated', 'ok', 'unsure']
+        && d.modernCode is string && d.modernCode.size() <= 4000
+        && d.explanation is string && d.explanation.size() <= 2000
+        && d.sources is list && d.sources.size() <= 10
+        && (!('searchEntryPointHtml' in d)
+            || (d.searchEntryPointHtml is string && d.searchEntryPointHtml.size() <= 20000))
+        && d.model is string && d.model.size() <= 100
+        && d.createdBy == request.auth.uid
+        && d.createdAt == request.time;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

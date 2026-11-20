@@ -1,0 +1,83 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f7f7f9;
+  --card: #ffffff;
+  --fg: #1b1d22;
+  --muted: #5f6470;
+  --border: #e2e4ea;
+  --accent: #3b5bdb;
+  --ok: #2b8a3e;
+  --warn: #e8590c;
+  --err: #c92a2a;
+  --code-bg: #f1f3f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111317;
+    --card: #1a1d23;
+    --fg: #e6e8ec;
+    --muted: #9aa0ab;
+    --border: #2c3038;
+    --accent: #748ffc;
+    --ok: #69db7c;
+    --warn: #ffa94d;
+    --err: #ff8787;
+    --code-bg: #22262e;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { margin: 0; font-size: 1.6rem; }
+h2 { margin: 0 0 12px; font-size: 1.05rem; }
+.sub, .muted { color: var(--muted); margin: 4px 0 0; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 16px;
+}
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button {
+  font: inherit;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.status { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+.status dt { color: var(--muted); }
+.status dd { margin: 0; overflow-wrap: anywhere; }
+.result { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; }
+.badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.badge.on-device { color: var(--ok); }
+.badge.cloud { color: var(--accent); }
+.badge.cache { color: var(--warn); }
+.badge.error { color: var(--err); }
+.badge.unverified { color: var(--warn); border-style: dashed; }
+pre {
+  background: var(--code-bg);
+  padding: 10px 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  margin: 8px 0 0;
+}
+.sources { margin: 8px 0 0; padding-left: 18px; }
+.sources a { color: var(--accent); }

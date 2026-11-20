@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial Time-Machine · Hybrid check</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <h1>Tutorial Time-Machine</h1>
+        <p class="sub">Milestone 1: hybrid inference diagnostics</p>
+      </header>
+
+      <section class="card">
+        <h2>Firebase</h2>
+        <dl id="status" class="status"><dt>Status</dt><dd>Initializing…</dd></dl>
+      </section>
+
+      <section class="card">
+        <h2>On-device model (Gemini Nano)</h2>
+        <p id="device-status" class="muted">Checking…</p>
+        <div class="row">
+          <button id="btn-download" hidden>Download on-device model</button>
+          <progress id="download-progress" max="1" value="0" hidden></progress>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Test prompts</h2>
+        <div class="row">
+          <button id="btn-scan" disabled>⚡ Run scan model (prefer on-device)</button>
+          <button id="btn-verify" disabled>☁️ Run verify model (cloud + Google Search)</button>
+        </div>
+        <div id="results"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
