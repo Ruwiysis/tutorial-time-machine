@@ -6,7 +6,20 @@ Built for **#BuildHybridAI 2026** on **Firebase AI Logic hybrid inference**: Gem
 
 - **Live web app:** https://tutorial-time-machine.web.app ([open the Firebase demo directly](https://tutorial-time-machine.web.app/?demo=firebase-v8-firestore))
 - **Demo tutorial pages for the extension:** https://tutorial-time-machine.web.app/tutorials/firebase-v8-firestore.html
+- **Chrome extension (ready to install):** [download the latest release](https://github.com/Ruwiysis/tutorial-time-machine/releases/latest/download/tutorial-time-machine-extension-v1.0.0.zip) (see [Install the extension](#install-the-extension-1-minute))
 - **License:** [Apache-2.0](LICENSE)
+
+## Install the extension (1 minute)
+
+1. [Download the zip](https://github.com/Ruwiysis/tutorial-time-machine/releases/latest/download/tutorial-time-machine-extension-v1.0.0.zip) and **unzip** it into a folder.
+2. In desktop Chrome (139+), open `chrome://extensions` and turn on **Developer mode** (top right).
+3. Click **Load unpacked** and choose the unzipped folder (the one that contains `manifest.json`).
+4. Pin **Tutorial Time-Machine** from the 🧩 menu, then open a demo tutorial: https://tutorial-time-machine.web.app/tutorials/firebase-v8-firestore.html
+5. Click the hourglass icon → **Open side panel**. Outdated lines get 🔴 markers on the page; click one for the fix.
+
+For the on-device scan, Chrome needs Gemini Nano (see [On-device Gemini Nano](#on-device-gemini-nano)). Without it, the scan runs in the cloud and the badges show ☁️ instead of ⚡.
+
+The released build talks to this project's Firebase backend using a dedicated App Check **debug token** (reCAPTCHA can't run inside an extension). It's separate from the web app's and will be revoked after judging.
 
 ---
 
@@ -141,6 +154,8 @@ npm run deploy:web                 # build, leak check, deploy to Firebase Hosti
 `/diagnostics.html` shows every Firebase service's status and runs each model on its own.
 
 ### 4. Chrome extension
+
+To just try it, use the [prebuilt release](#install-the-extension-1-minute). To build your own against your Firebase project:
 
 ```bash
 npm run build:ext                  # → apps/extension/dist
