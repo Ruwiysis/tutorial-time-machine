@@ -1,5 +1,6 @@
 /* Web app layout. Colors come from the shared tokens in @ttm/ui. */
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { color-scheme: light dark; }
 body {
   margin: 0;
@@ -69,7 +70,7 @@ main { padding-top: 24px; padding-bottom: 64px; }
 .tutorial-article p code { font: 0.85em var(--ttm-mono); background: var(--ttm-code-bg); padding: 1px 5px; border-radius: 4px; }
 .tutorial-article .ttm-code { font-family: system-ui, sans-serif; }
 
-.panel { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 32px); overflow-y: auto; padding-bottom: 4px; }
+.panel { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 12px; max-height: calc(100vh - 32px); overflow-y: auto; overflow-x: hidden; padding-bottom: 4px; min-width: 0; }
 .panel .ttm-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .panel .ttm-stat-value { font-size: 1.25rem; }
 .summary p { margin: 0; }

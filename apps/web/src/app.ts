@@ -210,6 +210,7 @@ async function run() {
   $('detail').replaceChildren();
   $('results').replaceChildren();
   $('summary').textContent = '';
+  if ($('banner').classList.contains('banner-error')) hideBanner();
   steps.reset();
   const onDevice = deviceStatus === 'available';
   steps.set('scan', 'active', onDevice ? 'Gemini Nano is reading the code…' : 'Reading the code in the cloud…');
@@ -276,12 +277,21 @@ function showResults(doc: OpenDoc, r: PageCheckResult) {
   if (stats.unique) {
     steps.set('cache', 'done', `${stats.fromCache} of ${plural(stats.unique, 'line')} already verified`);
   }
-  if (stats.cloudCalls) {
+  const all = [...r.outcomes.values()];
+  const cloudTried = all.filter((o) => o.status === 'error' || (o.status !== 'skipped' && o.servedBy === 'cloud'));
+  const failed = cloudTried.filter((o) => o.status === 'error');
+  if (stats.cloudCalls && failed.length && failed.length === cloudTried.length) {
+    steps.set('cloud', 'error', `All ${plural(stats.cloudCalls, 'request')} failed`);
+  } else if (stats.cloudCalls) {
     const search = stats.groundedCalls ? ' with Google Search' : ' (Google Search unavailable)';
-    steps.set('cloud', 'done', `${plural(stats.sentToCloud, 'line')} in ${plural(stats.cloudCalls, 'request')}${search} · ${secs(r.timings.verifyMs)}`);
+    const failures = failed.length ? ` · ${failed.length} failed` : '';
+    steps.set('cloud', 'done', `${plural(stats.sentToCloud, 'line')} in ${plural(stats.cloudCalls, 'request')}${search} · ${secs(r.timings.verifyMs)}${failures}`);
   } else if (stats.unique) {
     steps.set('cloud', 'skipped', stats.skipped ? 'Budget used up' : 'Not needed: everything came from the cache');
   }
+
+  const firstFailure = failed[0];
+  if (firstFailure?.status === 'error') showBanner('error', friendlyMessage(firstFailure.reason));
 
   $('meter').replaceChildren(renderSavingsMeter({ linesScanned: r.page.linesScanned, scanServedBy: r.scanServedBy, stats }));
 
@@ -365,10 +375,18 @@ function message(err: unknown): string {
 }
 
 function friendlyError(err: unknown): string {
-  const msg = message(err);
-  if (isQuotaError(err)) return 'The free Gemini quota for this demo is used up for now. Please try again in a minute, or pick a tutorial someone already checked (it comes from the cache).';
-  if (/app.?check|attestation|recaptcha/i.test(msg)) return 'This browser couldn’t pass Firebase App Check, so the cloud step was blocked. Reload the page and try again.';
-  return `Something went wrong: ${msg}`;
+  return isQuotaError(err) ? friendlyMessage('[429]') : friendlyMessage(message(err));
+}
+
+/** Turns SDK error text into something a reader can act on. */
+function friendlyMessage(msg: string): string {
+  if (/\b429\b|quota|RESOURCE_EXHAUSTED/i.test(msg)) {
+    return 'The free Gemini quota for this demo is used up for now. Please try again in a minute, or pick a tutorial someone already checked (it comes from the cache).';
+  }
+  if (/app.?check|attestation|recaptcha/i.test(msg)) {
+    return 'The cloud step was blocked because this browser didn’t pass Firebase App Check (reCAPTCHA). The on-device scan and the cache still work. Try reloading the page.';
+  }
+  return `The cloud check failed: ${msg}`;
 }
 
 // ── Start ───────────────────────────────────────────────────────────────────
