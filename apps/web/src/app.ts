@@ -389,6 +389,21 @@ function friendlyMessage(msg: string): string {
   return `The cloud check failed: ${msg}`;
 }
 
+/**
+ * Loads Gemini Nano into memory while the reader is still choosing a tutorial,
+ * so the first real scan doesn't pay the cold start. On-device only: free,
+ * and nothing leaves the browser. The SDK keeps the last session alive, which
+ * keeps the model loaded. Failures are ignored; the real scan will retry.
+ */
+function warmUpDeviceModel() {
+  if (deviceStatus !== 'available' || !scanModel) return;
+  const t0 = performance.now();
+  scanModel
+    .generateContent('Reply with JSON only: {"lib":"none","sure":[],"maybe":[]}')
+    .then(() => console.info(`[ttm] Gemini Nano warmed up in ${Math.round(performance.now() - t0)} ms`))
+    .catch(() => {});
+}
+
 // ── Start ───────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -406,6 +421,7 @@ async function main() {
   }
   await refreshDevice();
   setBusy(false);
+  warmUpDeviceModel();
 
   // Deep link for demos: /?demo=firebase-v8-firestore opens and runs that tutorial.
   const demo = new URLSearchParams(location.search).get('demo');
