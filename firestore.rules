@@ -1,8 +1,8 @@
 rules_version = '2';
 
 // verifiedLines/{hash}: shared cache of cloud-verified lines.
-//   hash = SHA-256(library + "\n" + normalized code line), as 64 lowercase hex chars
-//   (prefixed with "ungrounded\n" for answers made without Google Search).
+//   hash = SHA-256("v2\n" + library + "\n" + normalized code line), as 64 lowercase hex chars
+//   ("v2\nungrounded\n" + … for answers made without Google Search). See packages/core/src/hash.ts.
 // Anyone can read, so the next reader of a tutorial gets the fix instantly.
 // Only signed-in (anonymous is fine) clients can create entries, and the schema is validated.
 // Entries are immutable from clients: no update and no delete.

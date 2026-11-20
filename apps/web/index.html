@@ -3,45 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tutorial Time-Machine · Hybrid check</title>
-    <link rel="stylesheet" href="/src/style.css" />
+    <title>Tutorial Time-Machine</title>
+    <meta name="description" content="Spot outdated code in coding tutorials. Gemini Nano scans on your device, Gemini with Google Search verifies in the cloud." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%8F%B3%3C/text%3E%3C/svg%3E" />
   </head>
   <body>
-    <main class="wrap">
-      <header>
-        <h1>Tutorial Time-Machine</h1>
-        <p class="sub">Hybrid inference diagnostics</p>
-      </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="hero">
+      <div class="wrap">
+        <p class="eyebrow">#BuildHybridAI · Firebase AI Logic</p>
+        <h1>⏳ Tutorial Time-Machine</h1>
+        <p class="tagline">
+          Coding tutorials age fast. Paste one in, and see which lines are outdated, with the modern fix right next to them.
+        </p>
+      </div>
+    </header>
 
-      <section class="card">
-        <h2>Firebase</h2>
-        <dl id="status" class="status"><dt>Status</dt><dd>Initializing…</dd></dl>
+    <main id="main" class="wrap">
+      <div id="banner" class="banner" hidden role="status"></div>
+
+      <section aria-labelledby="how-title" class="section">
+        <h2 id="how-title" class="section-title">How each check runs</h2>
+        <div id="steps"></div>
       </section>
 
-      <section class="card">
-        <h2>On-device model (Gemini Nano)</h2>
-        <p id="device-status" class="muted">Checking…</p>
-        <div class="row">
-          <button id="btn-download" hidden>Download on-device model</button>
-          <progress id="download-progress" max="1" value="0" hidden></progress>
+      <section aria-labelledby="pick-title" class="section">
+        <h2 id="pick-title" class="section-title">1. Pick a tutorial, or paste your own code</h2>
+        <div id="picker" class="picker"></div>
+        <form id="paste-form" class="paste" hidden>
+          <label for="paste-code">Code from a tutorial</label>
+          <textarea id="paste-code" rows="9" spellcheck="false" placeholder="import ReactDOM from 'react-dom';&#10;ReactDOM.render(<App />, document.getElementById('root'));"></textarea>
+          <div class="paste-row">
+            <label for="paste-lang">Language</label>
+            <select id="paste-lang">
+              <option value="">Auto</option>
+              <option value="javascript">JavaScript</option>
+              <option value="typescript">TypeScript</option>
+              <option value="jsx">JSX</option>
+              <option value="python">Python</option>
+              <option value="bash">Shell</option>
+            </select>
+            <button type="submit" class="ttm-btn ttm-btn-primary">Check this code</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="workspace" class="workspace" aria-labelledby="result-title" hidden>
+        <h2 id="result-title" class="section-title">2. Read it with the outdated lines marked</h2>
+        <div class="workspace-grid">
+          <div id="tutorial" class="tutorial"></div>
+          <aside id="panel" class="panel" aria-label="Results">
+            <div id="meter"></div>
+            <div id="summary" class="summary" aria-live="polite"></div>
+            <div id="detail"></div>
+            <ul id="results" class="results"></ul>
+          </aside>
         </div>
-      </section>
-
-      <section class="card">
-        <h2>Test prompts</h2>
-        <div class="row">
-          <button id="btn-scan" disabled>⚡ Run scan model (prefer on-device)</button>
-          <button id="btn-verify" disabled>☁️ Run verify model (cloud + Google Search)</button>
-        </div>
-        <div id="results"></div>
-      </section>
-
-      <section class="card">
-        <h2>Pipeline on a fixture (scan → cache → cloud)</h2>
-        <p class="muted">Step 1 scans a demo tutorial on-device. Then verify the flagged lines: the cache first, the cloud with Google Search for the rest.</p>
-        <div id="fixture-scan"></div>
       </section>
     </main>
-    <script type="module" src="/src/main.ts"></script>
+
+    <footer class="footer">
+      <div class="wrap">
+        <p>
+          Built with Firebase AI Logic (hybrid inference: Gemini Nano on-device + Gemini in the cloud with Google Search),
+          Firestore, Anonymous Auth, Remote Config and App Check.
+        </p>
+        <p>
+          <a href="https://github.com/Ruwiysis/tutorial-time-machine" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+          · Apache-2.0 · <a href="/diagnostics.html">Diagnostics</a>
+        </p>
+      </div>
+    </footer>
+    <script type="module" src="/src/app.ts"></script>
   </body>
 </html>

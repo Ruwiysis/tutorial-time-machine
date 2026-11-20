@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node ../../scripts/check-dist.mjs",
     "preview": "vite preview"
   },
-  "dependencies": { "@ttm/core": "0.1.0" }
+  "dependencies": { "@ttm/core": "0.1.0", "@ttm/ui": "0.1.0" }
 }

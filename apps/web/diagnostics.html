@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TTM Diagnostics</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <h1>Tutorial Time-Machine</h1>
+        <p class="sub">Hybrid inference diagnostics</p>
+      </header>
+
+      <section class="card">
+        <h2>Firebase</h2>
+        <dl id="status" class="status"><dt>Status</dt><dd>Initializing…</dd></dl>
+      </section>
+
+      <section class="card">
+        <h2>On-device model (Gemini Nano)</h2>
+        <p id="device-status" class="muted">Checking…</p>
+        <div class="row">
+          <button id="btn-download" hidden>Download on-device model</button>
+          <progress id="download-progress" max="1" value="0" hidden></progress>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Test prompts</h2>
+        <div class="row">
+          <button id="btn-scan" disabled>⚡ Run scan model (prefer on-device)</button>
+          <button id="btn-verify" disabled>☁️ Run verify model (cloud + Google Search)</button>
+        </div>
+        <div id="results"></div>
+      </section>
+
+      <section class="card">
+        <h2>Pipeline on a fixture (scan → cache → cloud)</h2>
+        <p class="muted">Step 1 scans a demo tutorial on-device. Then verify the flagged lines: the cache first, the cloud with Google Search for the rest.</p>
+        <div id="fixture-scan"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/diagnostics.ts"></script>
+  </body>
+</html>

@@ -25,16 +25,24 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 /**
+ * Version of the verification prompt and answer format. Cache entries are
+ * immutable (no client can edit or delete them), so when the prompt improves
+ * we bump this and start a fresh key space; old answers are simply never
+ * looked up again. v1 had no "judge only the line itself" rule.
+ */
+export const CACHE_VERSION = 2;
+
+/**
  * Firestore document id for a verified line: 64 lowercase hex characters.
  *
- *   grounded:   SHA-256(library + "\n" + normalized line)
- *   ungrounded: SHA-256("ungrounded\n" + library + "\n" + normalized line)
+ *   grounded:   SHA-256("v2\n" + library + "\n" + normalized line)
+ *   ungrounded: SHA-256("v2\nungrounded\n" + library + "\n" + normalized line)
  *
  * Answers made without Google Search (e.g. when grounding is out of quota)
  * live under a different key, so they can never block a Search-verified
- * entry for the same line from being stored later (entries are immutable).
+ * entry for the same line from being stored later.
  */
 export function cacheKey(library: string, code: string, grounded = true): Promise<string> {
   const base = `${normalizeLibrary(library)}\n${normalizeCodeLine(code)}`;
-  return sha256Hex(grounded ? base : `ungrounded\n${base}`);
+  return sha256Hex(`v${CACHE_VERSION}\n${grounded ? '' : 'ungrounded\n'}${base}`);
 }

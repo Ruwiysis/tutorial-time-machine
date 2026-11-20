@@ -11,7 +11,7 @@
   "scripts": {
     "dev:web": "npm run dev -w @ttm/web",
     "build": "npm run build -w @ttm/web",
-    "typecheck": "tsc -p packages/core && tsc -p apps/web && tsc -p tsconfig.test.json",
+    "typecheck": "tsc -p packages/core && tsc -p packages/ui && tsc -p apps/web && tsc -p tsconfig.test.json",
     "test": "node scripts/vitest.mjs run",
     "deploy:rules": "firebase deploy --only firestore:rules,remoteconfig",
     "deploy:web": "npm run build && firebase deploy --only hosting"
@@ -22,5 +22,8 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.1"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.7"
   }
 }

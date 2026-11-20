@@ -8,3 +8,4 @@ export * from './scan';
 export * from './hash';
 export * from './cache';
 export * from './verify';
+export * from './pipeline';

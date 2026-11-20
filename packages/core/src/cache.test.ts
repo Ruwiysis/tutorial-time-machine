@@ -49,8 +49,8 @@ describe('cacheKey', () => {
     expect(await cacheKey('firebase', 'x()')).toMatch(/^[a-f0-9]{64}$/);
   });
 
-  it('matches SHA-256 of library + "\\n" + normalized line', async () => {
-    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('firebase\nconst db = firebase.firestore()'));
+  it('matches SHA-256 of version + library + normalized line', async () => {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('v2\nfirebase\nconst db = firebase.firestore()'));
     const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
     expect(await cacheKey(' Firebase ', '  const db = firebase.firestore();')).toBe(hex);
   });

@@ -21,17 +21,7 @@ import {
   type VerifyDeps,
 } from '@ttm/core';
 
-// Bundled at build time, so the hosted app needs no extra requests.
-const FIXTURES = import.meta.glob<string>('../../../fixtures/*.html', { query: '?raw', import: 'default', eager: true });
-
-function readFixture(html: string): { title: string; blocks: CodeBlock[] } {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const blocks = [...doc.querySelectorAll('pre > code')].map((el) => ({
-    language: /language-([\w-]+)/.exec(el.className)?.[1],
-    code: el.textContent ?? '',
-  }));
-  return { title: doc.title, blocks };
-}
+import { FIXTURES, readFixture } from './fixtures';
 
 /** The on-device scan reports two levels: "sure" (0.9) and "maybe" (0.5). */
 const level = (confidence: number) => (confidence >= SURE_CONFIDENCE ? 'sure' : 'maybe');
