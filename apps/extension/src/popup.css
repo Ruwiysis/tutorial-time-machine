@@ -10,3 +10,4 @@ body { margin: 0; width: 320px; background: var(--ttm-bg); color: var(--ttm-fg);
 .pp-status dd { margin: 0; }
 .pp-totals { margin: 0; font-size: 0.85rem; color: var(--ttm-muted); }
 .pp-link { font-size: 0.85rem; color: var(--ttm-accent); }
+.pp h1 { display: flex; align-items: center; gap: 8px; }

@@ -16,7 +16,7 @@ a { color: var(--ttm-accent); }
 /* Hero */
 .hero { padding: 40px 0 28px; border-bottom: 1px solid var(--ttm-border); background: linear-gradient(180deg, color-mix(in srgb, var(--ttm-on-device) 8%, transparent), transparent); }
 .eyebrow { margin: 0 0 6px; font: 600 0.8rem/1 system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ttm-on-device); }
-.hero h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -0.01em; }
+.hero h1 { display: flex; align-items: center; gap: 12px; margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -0.01em; }
 .tagline { margin: 10px 0 0; max-width: 62ch; font-size: 1.1rem; color: var(--ttm-muted); }
 
 /* Sections */
@@ -100,3 +100,4 @@ main { padding-top: 24px; padding-bottom: 64px; }
   .panel { position: static; max-height: none; overflow: visible; order: -1; }
   .tutorial { padding: 4px 14px 16px; }
 }
+.hero .logo { width: 44px; height: 44px; border-radius: 10px; flex: none; }

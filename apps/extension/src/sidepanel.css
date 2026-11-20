@@ -41,3 +41,4 @@ body { margin: 0; background: var(--ttm-bg); color: var(--ttm-fg); font: 14px/1.
 .sp-item.active { border-color: var(--ttm-accent); background: color-mix(in srgb, var(--ttm-accent) 8%, var(--ttm-surface)); }
 .sp-item code { font: 12px/1.4 var(--ttm-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sp-item .ttm-badge { font-size: 0.68rem; padding: 3px 6px; }
+.sp-head h1 { display: flex; align-items: center; gap: 8px; }
