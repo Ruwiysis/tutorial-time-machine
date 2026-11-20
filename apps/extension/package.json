@@ -1,0 +1,12 @@
+{
+  "name": "@ttm/extension",
+  "private": true,
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "watch": "vite build --watch"
+  },
+  "dependencies": { "@ttm/core": "0.1.0", "@ttm/ui": "0.1.0" }
+}

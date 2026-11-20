@@ -11,12 +11,15 @@
   "scripts": {
     "dev:web": "npm run dev -w @ttm/web",
     "build": "npm run build -w @ttm/web",
-    "typecheck": "tsc -p packages/core && tsc -p packages/ui && tsc -p apps/web && tsc -p tsconfig.test.json",
+    "typecheck": "tsc -p packages/core && tsc -p packages/ui && tsc -p apps/web && tsc -p apps/extension && tsc -p tsconfig.test.json",
     "test": "node scripts/vitest.mjs run",
     "deploy:rules": "firebase deploy --only firestore:rules,remoteconfig",
-    "deploy:web": "npm run build && firebase deploy --only hosting"
+    "deploy:web": "npm run build && firebase deploy --only hosting",
+    "build:ext": "npm run build -w @ttm/extension",
+    "watch:ext": "npm run watch -w @ttm/extension"
   },
   "devDependencies": {
+    "@types/chrome": "^0.3.7",
     "@types/dom-chromium-ai": "^0.0.18",
     "@types/node": "^24.19.2",
     "typescript": "^7.0.2",

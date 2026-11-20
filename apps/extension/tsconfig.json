@@ -1,0 +1,6 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "types": ["dom-chromium-ai", "vite/client", "chrome"] },
+  "include": ["src", "vite.config.ts", "../../packages/core/src", "../../packages/ui/src"],
+  "exclude": ["../../packages/core/src/**/*.test.ts", "../../packages/core/src/test-utils"]
+}

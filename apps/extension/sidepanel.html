@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial Time-Machine</title>
+  </head>
+  <body>
+    <main class="sp">
+      <h1>⏳ Tutorial Time-Machine</h1>
+      <p class="ttm-muted">Extension feasibility check: does Firebase AI Logic hybrid inference work inside a Chrome extension page?</p>
+      <dl id="status" class="sp-status"><dt>Status</dt><dd>Starting…</dd></dl>
+      <div class="sp-row">
+        <button id="btn-download" class="ttm-btn" hidden>⬇️ Download Gemini Nano</button>
+        <progress id="progress" max="1" value="0" hidden></progress>
+      </div>
+      <div class="sp-row">
+        <button id="btn-scan" class="ttm-btn ttm-btn-primary" disabled>⚡ Run on-device scan</button>
+        <button id="btn-verify" class="ttm-btn" disabled>☁️ Run cloud check</button>
+      </div>
+      <div id="out"></div>
+    </main>
+    <script type="module" src="./src/sidepanel.ts"></script>
+  </body>
+</html>
