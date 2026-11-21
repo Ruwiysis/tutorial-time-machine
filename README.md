@@ -2,7 +2,7 @@
 
 **A Chrome extension and web app that warn you, while you read, when a coding tutorial's code is outdated, and show the modern fix right next to the line.**
 
-Built for **#BuildHybridAI 2026** on **Firebase AI Logic hybrid inference**: Gemini Nano reads every code block on your device, and Gemini in the cloud (with Google Search grounding) verifies only the few lines that need it.
+Built for **#BuildHybridAI 2026** on **Firebase AI Logic hybrid inference**: Gemini Nano reads every code block on your device, and Gemini in the cloud verifies only the few lines that need it (with Google Search grounding when it's available; see [Cloud verification and Google Search](#cloud-verification-and-google-search)).
 
 - **Live web app:** https://tutorial-time-machine.web.app ([open the Firebase demo directly](https://tutorial-time-machine.web.app/?demo=firebase-v8-firestore))
 - **Demo tutorial pages for the extension:** https://tutorial-time-machine.web.app/tutorials/firebase-v8-firestore.html
@@ -51,7 +51,7 @@ flowchart LR
 
     subgraph firebase["Firebase"]
       cache["📦 2. Shared cache<br/>Firestore verifiedLines/{sha256}"]
-      verify["☁️ 3. Verify in the cloud<br/>Gemini + Google Search grounding<br/>ONLY_IN_CLOUD, batched per library"]
+      verify["☁️ 3. Verify in the cloud<br/>Gemini (+ Google Search grounding when available)<br/>ONLY_IN_CLOUD, batched per library"]
       rc["Remote Config<br/>model · mode · threshold · budget"]
       appcheck["App Check + Anonymous Auth"]
     end
@@ -73,7 +73,13 @@ Every result in the UI shows which path produced it (**⚡ On-device**, **📦 C
 |---|---|---|
 | **1. Scan** every line, find the library and the version-sensitive calls | **On-device** (Gemini Nano, `PREFER_ON_DEVICE`) | **Cost:** free, however many pages you read. **Privacy:** the page never leaves your machine. **Latency:** no network round trip. Most code (variables, loops, DOM calls) is filtered out here. |
 | **2. Look up** lines someone already verified | **Firestore cache** | The same outdated line appears in thousands of tutorials. Once one reader has it verified, everyone after gets the answer instantly with **no model call at all**. |
-| **3. Verify** "is this API still current, and what replaces it?" | **Cloud** (Gemini, `ONLY_IN_CLOUD` + Google Search) | **Fresh knowledge:** Nano's knowledge is frozen at training time and it can't use tools, so it can't know about a release from last month. In testing, Nano even called `firebase.firestore()` "modern". So the scan only *points at* lines, and the cloud model checks them against today's docs. It only ever sees a handful of flagged lines, never the page. |
+| **3. Verify** "is this API still current, and what replaces it?" | **Cloud** (Gemini, `ONLY_IN_CLOUD`, Google Search grounding when available) | **Fresh knowledge:** Nano's knowledge is frozen at training time and it can't use tools, so it can't know about a release from last month. In testing, Nano even called `firebase.firestore()` "modern". So the scan only *points at* lines, and the cloud model checks them against today's docs. It only ever sees a handful of flagged lines, never the page. |
+
+### Cloud verification and Google Search
+
+Cloud verification: flagged lines are checked by Gemini in the cloud through Firebase AI Logic. Google Search grounding is built in: when it’s available, Gemini checks each line against the latest documentation and shows its sources. When grounding is unavailable, the app falls back to Gemini’s own knowledge and labels the result clearly, so the user always knows where an answer came from.
+
+> **Status of the live demo:** it runs on Firebase's free tier, where Google Search grounding isn't available for current Gemini models. So the demo's cloud answers come from Gemini's own knowledge and are labeled **"no Search"** on every badge and fix card. With a billing-enabled project, the same code shows the sources and Google's Search suggestions, with no code changes ([`verify.ts`](packages/core/src/verify.ts), [`grounding.ts`](packages/core/src/grounding.ts)).
 
 The hybrid decisions are commented where they're made: [`models.ts`](packages/core/src/models.ts) (inference modes and the echo-stub override), [`scan.ts`](packages/core/src/scan.ts) (what the on-device step returns and what goes on), [`verify.ts`](packages/core/src/verify.ts) (cache-first, batching, per-page budget, grounding fallback) and [`pipeline.ts`](packages/core/src/pipeline.ts) (the three steps end to end).
 

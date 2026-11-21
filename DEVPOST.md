@@ -27,7 +27,7 @@ It's built on **Firebase AI Logic's hybrid inference**, and the whole idea is to
 
 1. **⚡ Gemini Nano, on your device** (`PREFER_ON_DEVICE`): reads every code block on the page and points out lines that use a library API that might have changed. Free, private, no network.
 2. **📦 Firestore cache:** if anyone already checked a line, the answer comes back instantly with no AI call at all.
-3. **☁️ Gemini in the cloud** (`ONLY_IN_CLOUD`, with the Google Search tool): checks only the few flagged lines that aren't cached, and writes the result to the cache for the next reader.
+3. **☁️ Gemini in the cloud** (`ONLY_IN_CLOUD`): checks only the few flagged lines that aren't cached, and writes the result to the cache for the next reader. Google Search grounding is built in: when it's available, Gemini checks each line against the latest docs and shows its sources; when it isn't (as on the free tier), the app uses Gemini's own knowledge and labels the answer "no Search".
 
 Nano's knowledge is frozen, so it only points. The cloud model decides. Also used: **App Check** (reCAPTCHA Enterprise on the web, a debug token for the extension), **Anonymous Auth**, **Remote Config** (model name, thresholds and budget can change without a redeploy) and **Hosting**.
 

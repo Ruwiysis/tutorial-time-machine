@@ -22,7 +22,7 @@ const STEPS: Record<StepId, { icon: string; title: string; why: string }> = {
   cloud: {
     icon: '☁️',
     title: 'Verify in the cloud',
-    why: 'Only flagged, uncached lines go to Gemini with Google Search, because Nano’s knowledge is frozen and APIs keep changing.',
+    why: 'Only flagged, uncached lines go to Gemini in the cloud (with Google Search when available), because Nano’s knowledge is frozen and APIs keep changing.',
   },
 };
 

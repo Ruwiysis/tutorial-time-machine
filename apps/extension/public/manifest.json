@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Tutorial Time-Machine",
-  "version": "1.0.1",
-  "description": "Warns you while you read when a coding tutorial's code is outdated, and shows the modern fix. Gemini Nano on-device + Gemini with Google Search.",
+  "version": "1.0.2",
+  "description": "Warns you while you read when a coding tutorial's code is outdated, and shows the modern fix. Gemini Nano on-device + Gemini in the cloud.",
   "minimum_chrome_version": "139",
   "action": {
     "default_title": "Tutorial Time-Machine",
