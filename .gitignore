@@ -9,3 +9,6 @@ dist/
 firebase-debug.log*
 firestore-debug.log*
 .DS_Store
+
+# Private notes, never pushed
+VIDEO_SCRIPT.md
